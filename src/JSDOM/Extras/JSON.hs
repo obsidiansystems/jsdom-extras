@@ -3,6 +3,7 @@
     Platform-independent JSON-to-JSVal and JSVal-to-JSON functions
 -}
 {-# Language CPP #-}
+{-# Language OverloadedStrings #-}
 module JSDOM.Extras.JSON where
 
 import Control.Lens
