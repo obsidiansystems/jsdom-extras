@@ -1,0 +1,24 @@
+cabal-version:      >=1.10
+name:               jsdom-extras
+version:            0.1.0.0
+synopsis:           Convenience utilities for JSDOM
+license:            BSD3
+license-file:       LICENSE
+author:             Obsidian Systems LLC
+maintainer:         maintainer@obsidian.systems
+copyright:          2024 Obsidian Systems LLC
+category:           Web
+build-type:         Simple
+
+library
+    exposed-modules: JSDOM.Extras.ConsoleLog
+                     JSDOM.Extras.JSON
+                     JSDOM.Extras.Object
+    build-depends:    base
+                    , jsaddle
+                    , jsaddle-dom
+                    , lens
+                    , text
+    hs-source-dirs:   src
+    default-language: Haskell2010
+    ghc-options: -Wall
