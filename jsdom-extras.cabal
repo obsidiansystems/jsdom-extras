@@ -15,6 +15,7 @@ library
                      JSDOM.Extras.JSON
                      JSDOM.Extras.Object
     build-depends:    base
+                    , aeson
                     , jsaddle
                     , jsaddle-dom
                     , lens
