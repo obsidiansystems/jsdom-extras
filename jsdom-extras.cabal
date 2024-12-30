@@ -1,15 +1,18 @@
-cabal-version: >=1.10
-name:          jsdom-extras
-version:       0.1.0.0
-synopsis:      Convenience utilities for JSDOM
-description:   Commonly used javascript functions
-license:       BSD3
-license-file:  LICENSE
-author:        Obsidian Systems LLC
-maintainer:    maintainer@obsidian.systems
-copyright:     2024 Obsidian Systems LLC
-category:      Web
-build-type:    Simple
+cabal-version:      >=1.10
+name:               jsdom-extras
+version:            0.1.0.0
+synopsis:           Convenience utilities for JSDOM
+description:        Commonly used javascript functions
+license:            BSD3
+license-file:       LICENSE
+author:             Obsidian Systems LLC
+maintainer:         maintainer@obsidian.systems
+copyright:          2024 Obsidian Systems LLC
+category:           Web
+build-type:         Simple
+extra-source-files:
+  CHANGELOG.md
+  README.md
 
 library
   exposed-modules:
@@ -30,5 +33,5 @@ library
   ghc-options:      -Wall
 
 source-repository head
-  type: git
+  type:     git
   location: https://github.com/obsidiansystems/jsdom-extras
