@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               jsdom-extras
-version:            0.1.0.0
+version:            0.1.1.0
 synopsis:           Convenience utilities for JSDOM
 description:        Handy javascript functions and bindings for web development
 license:            BSD-3-Clause
