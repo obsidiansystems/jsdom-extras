@@ -10,7 +10,9 @@ maintainer:         maintainer@obsidian.systems
 copyright:          2024 Obsidian Systems LLC
 category:           Web
 build-type:         Simple
-extra-source-files: README.md
+extra-source-files:
+  CHANGELOG.md
+  README.md
 
 library
   exposed-modules:
@@ -20,7 +22,7 @@ library
     JSDOM.Extras.WaitForJS
 
   build-depends:
-    , aeson    >=2.0   && <2.2
+    , aeson    >=2.0   && <2.3
     , base     >=4.11  && <4.22
     , jsaddle  >=0.9.8 && <0.10
     , lens     >=5.0.1 && <5.4
