@@ -1,15 +1,16 @@
-cabal-version: 3.0
-name:          jsdom-extras
-version:       0.1.0.0
-synopsis:      Convenience utilities for JSDOM
-description:   Handy javascript functions and bindings for web development
-license:       BSD-3-Clause
-license-file:  LICENSE
-author:        Obsidian Systems LLC
-maintainer:    maintainer@obsidian.systems
-copyright:     2024 Obsidian Systems LLC
-category:      Web
-build-type:    Simple
+cabal-version:      3.0
+name:               jsdom-extras
+version:            0.1.0.0
+synopsis:           Convenience utilities for JSDOM
+description:        Handy javascript functions and bindings for web development
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Obsidian Systems LLC
+maintainer:         maintainer@obsidian.systems
+copyright:          2024 Obsidian Systems LLC
+category:           Web
+build-type:         Simple
+extra-source-files: README.md
 
 library
   exposed-modules:

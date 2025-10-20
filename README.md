@@ -1,0 +1,127 @@
+# jsdom-extras
+
+Convenience utilities for working with **JSDOM / JSaddle** from Haskell. This package wraps a few common patterns you’ll reach for in browser-ish code: console logging, JSON ↔︎ JSVal conversion, small object helpers, and a tiny utility to wait for globals to appear.
+
+> **Motivation**
+> If you’re doing Reflex-DOM or JSaddle work, you often need to bridge `aeson` values, poke at JS objects, or
+> ensure a script on the page has loaded before using it. `jsdom-extras` provides a small, typed toolkit for that.
+
+---
+
+## Features
+
+* **Console logging** via `console.log` without requiring `Show` or manual conversions.
+* **JSON helpers:** `Value ↔︎ JSVal` that work on both GHCJS and JSaddle-native backends.
+* **Object helpers:** Build, decompose, and query JavaScript `Object`s in a few lines.
+* **Wait for globals:** Poll for a `window` global and run code once it’s available.
+
+---
+
+## Quick start
+
+Below are small, self‑contained snippets. All examples assume:
+
+```haskell
+{-# LANGUAGE OverloadedStrings #-}
+import Language.Javascript.JSaddle (JSM, JSVal, MonadJSM)
+import qualified JSDOM.Extras.ConsoleLog as C
+import qualified JSDOM.Extras.JSON       as J
+import qualified JSDOM.Extras.Object     as O
+import qualified JSDOM.Extras.WaitForJS  as W
+```
+
+### 1) Console logging
+
+```haskell
+hello :: MonadJSM m => m ()
+hello = C.consoleLog ("Hello from Haskell!" :: JSM.String)
+```
+
+No `Show` burden: anything with `ToJSVal` is fair game.
+
+### 2) JSON ↔︎ JSVal
+
+```haskell
+import Data.Aeson (Value(..), object, (.=))
+
+mkUser :: JSM JSVal
+mkUser = J.jsValFromJSON (object ["name" .= ("Ada" :: String), "id" .= (1 :: Int)])
+
+roundTrip :: JSVal -> JSM (Maybe Value)
+roundTrip v = J.jsValToJSON v
+
+stringified :: JSVal -> JSM JSM.String
+stringified v = J.stringify v
+
+parsed :: JSM JSVal
+parsed = J.parse =<< J.toJSVal ("{\"ok\":true}" :: JSM.String)
+```
+
+These functions are **platform‑independent**:
+
+* On **GHCJS**, conversions use `toJSVal`/`fromJSVal`.
+* On **JSaddle native**, we reuse JSaddle’s internal JSON bridges.
+
+### 3) Object helpers
+
+```haskell
+mkObj :: MonadJSM m => m O.Object
+mkObj = O.toObject [("answer", 42 :: Int), ("name", "Ada" :: JSM.String)]
+
+readObj :: MonadJSM m => O.Object -> m [(JSM.String, JSVal)]
+readObj = O.fromObject
+
+findKey :: MonadJSM m => O.Object -> m (Maybe JSVal)
+findKey o = O.lookup "answer" o
+
+noop :: O.JSCallAsFunction
+noop = O.doNothing
+```
+
+`lookup` gracefully treats `null` and `undefined` as `Nothing`, and `toMaybe` is exposed if you need it directly.
+
+### 4) Wait for a global and use it
+
+Useful when a script tag populates `window.SomeLib` asynchronously.
+
+```haskell
+useWhenReady :: MonadJSM m => m ()
+useWhenReady = W.withGlobalJS "SomeLib" $ \lib -> do
+  -- do something with `lib :: JSVal`
+  C.consoleLog ("SomeLib is ready" :: JSM.String)
+```
+
+`waitForGlobalJS` polls at ~250ms intervals until the value is present (neither `null` nor `undefined`). If you want a non‑blocking probe, use `getGlobalJS` which returns `Maybe JSVal`.
+
+---
+
+## API reference
+
+The library exposes four modules:
+
+* `JSDOM.Extras.ConsoleLog`
+
+  * `consoleLog :: (MonadJSM m, ToJSVal a) => a -> m ()`
+
+* `JSDOM.Extras.JSON`
+
+  * `jsValFromJSON :: Value -> JSM JSVal`
+  * `jsValToJSON   :: JSVal -> JSM (Maybe Value)`
+  * `stringify     :: MonadJSM m => JSVal -> m JSM.String`
+  * `parse         :: MonadJSM m => JSVal -> m JSVal`
+
+* `JSDOM.Extras.Object`
+
+  * `type ToJSObject k v = (ToJSString k, ToJSVal v)`
+  * `singleton   :: (ToJSObject a b, MonadJSM m) => a -> b -> m Object`
+  * `toObject    :: (MonadJSM m, ToJSObject a b) => [(a, b)] -> m Object`
+  * `fromObject  :: MonadJSM m => Object -> m [(JSM.String, JSVal)]`
+  * `lookup      :: MonadJSM m => JSM.String -> Object -> m (Maybe JSVal)`
+  * `toMaybe     :: MonadJSM m => JSVal -> m (Maybe JSVal)`
+  * `doNothing   :: JSCallAsFunction`
+
+* `JSDOM.Extras.WaitForJS`
+
+  * `getGlobalJS   :: MonadJSM m => Text -> m (Maybe JSVal)`
+  * `waitForGlobalJS :: MonadJSM m => Text -> m JSVal`
+  * `withGlobalJS  :: MonadJSM m => Text -> (JSVal -> m a) -> m a`
